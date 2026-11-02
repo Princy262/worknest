@@ -6,6 +6,11 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 
+import './models/Company.js';
+import './models/User.js';
+import './models/Department.js';
+import './models/Team.js';
+
 const app = express();
 
 app.use(helmet());
