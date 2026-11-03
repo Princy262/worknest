@@ -7,10 +7,11 @@ import morgan from 'morgan';
 import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
-import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import platformRoutes from './routes/platformRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import departmentRoutes from './routes/departmentRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
 
@@ -25,8 +26,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/platform', platformRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/teams', teamRoutes);
