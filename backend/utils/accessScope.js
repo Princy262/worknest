@@ -69,3 +69,70 @@ export const canManageUser = (user, target) =>
 export const canCreateRole = (user, roleToCreate) =>
   ROLE_LEVELS[roleToCreate] !== undefined &&
   ROLE_LEVELS[roleToCreate] < ROLE_LEVELS[user.role];
+
+  // 5. WHICH DEPARTMENTS CAN THIS USER SEE? (a filter for list queries)
+export const getAccessibleDepartmentsFilter = (user) => {
+  switch (user.role) {
+    case ROLES.COMPANY_HEAD:
+      return user.company ? { company: user.company } : NOTHING;
+
+    case ROLES.DEPT_HEAD:
+      return user.company && user.department
+        ? { company: user.company, _id: user.department }
+        : NOTHING;
+
+    default:
+      return NOTHING;
+  }
+};
+
+// 6. CAN THIS USER SEE ONE SPECIFIC DEPARTMENT?
+export const canAccessDepartment = (user, department) => {
+  if (!sameId(user.company, department.company)) return false;
+
+  switch (user.role) {
+    case ROLES.COMPANY_HEAD:
+      return true;
+    case ROLES.DEPT_HEAD:
+      return sameId(user.department, department._id);
+    default:
+      return false;
+  }
+};
+
+// 7. WHICH TEAMS CAN THIS USER SEE?
+export const getAccessibleTeamsFilter = (user) => {
+  switch (user.role) {
+    case ROLES.COMPANY_HEAD:
+      return user.company ? { company: user.company } : NOTHING;
+
+    case ROLES.DEPT_HEAD:
+      return user.company && user.department
+        ? { company: user.company, department: user.department }
+        : NOTHING;
+
+    case ROLES.TEAM_MANAGER:
+      return user.company && user.team
+        ? { company: user.company, _id: user.team }
+        : NOTHING;
+
+    default:
+      return NOTHING;
+  }
+};
+
+// 8. CAN THIS USER SEE ONE SPECIFIC TEAM?
+export const canAccessTeam = (user, team) => {
+  if (!sameId(user.company, team.company)) return false;
+
+  switch (user.role) {
+    case ROLES.COMPANY_HEAD:
+      return true;
+    case ROLES.DEPT_HEAD:
+      return sameId(user.department, team.department);
+    case ROLES.TEAM_MANAGER:
+      return sameId(user.team, team._id);
+    default:
+      return false;
+  }
+};
