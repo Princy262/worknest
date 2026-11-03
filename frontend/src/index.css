@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* ---------- WorkNest theme: colors are defined ONCE, here ---------- */
+@theme {
+  /* Brand */
+  --color-primary: #2D6F6B;        /* Deep Teal: main buttons, active menu item, links */
+  --color-primary-hover: #245B58;  /* Dark Teal: button hover */
+  --color-secondary: #5CAEA3;      /* Soft Teal: selected filters, charts, teams */
+  --color-accent: #9DD8CE;         /* Sage/Mint: department cards, info blocks */
+
+  /* Structure */
+  --color-dark: #263238;           /* Charcoal: sidebar, headings */
+  --color-background: #F7FAF9;     /* Page background */
+  --color-surface: #FFFFFF;        /* Cards, tables, forms */
+  --color-ink: #263238;            /* Main text */
+  --color-muted: #68777A;          /* Secondary text, labels */
+  --color-line: #DDE5E3;           /* Borders and dividers */
+
+  /* Employment status: solid color + soft badge background + readable badge text */
+  --color-status-active: #4CAF7D;
+  --color-status-active-soft: #E3F4EB;
+  --color-status-active-text: #25704A;
+
+  --color-status-leave: #F4B860;
+  --color-status-leave-soft: #FDF1DC;
+  --color-status-leave-text: #8A5A10;
+
+  --color-status-inactive: #E57373;
+  --color-status-inactive-soft: #FBE6E6;
+  --color-status-inactive-text: #A33A3A;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-ink);
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
