@@ -6,10 +6,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 
-import './models/Company.js';
-import './models/User.js';
-import './models/Department.js';
-import './models/Team.js';
+import authRoutes from './routes/authRoutes.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
 
@@ -22,6 +20,10 @@ app.use(cookieParser());
 app.get('/api/health', (req, res) => {
   res.json({ status: 'WorkNest API is running' });
 });
+
+app.use('/api/auth', authRoutes);
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
