@@ -11,9 +11,16 @@ import platformRoutes from './routes/platformRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import departmentRoutes from './routes/departmentRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
+import { apiLimiter } from './middleware/rateLimiter.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
+
+// When deployed behind a host like Render, the real visitor IP comes from a proxy header.
+// Without this, every visitor would look like the same IP and share one limit.
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 
 app.use(helmet());
 app.use(morgan('dev'));
@@ -24,6 +31,8 @@ app.use(cookieParser());
 app.get('/api/health', (req, res) => {
   res.json({ status: 'WorkNest API is running' });
 });
+
+app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/platform', platformRoutes);
