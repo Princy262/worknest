@@ -30,3 +30,5 @@ export const COMPANY_STATUS = {
 
 // The only fields an employee may change on their own profile.
 export const EMPLOYEE_EDITABLE_FIELDS = ['contact'];
+// The contact fields an employee may edit on their own profile.
+export const CONTACT_FIELDS = ['phone', 'address', 'emergencyContact'];
