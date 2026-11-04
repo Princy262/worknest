@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Search, UserPlus, Eye, Pencil, UserX } from 'lucide-react';
+import { Search, UserPlus, Eye, Pencil, UserX, KeyRound } from 'lucide-react';
 import api from '../api/axios';
 import useDebounce from '../utils/useDebounce';
 import useLookups from '../features/employees/useLookups';
@@ -9,6 +9,7 @@ import EmployeeDetailsModal from '../features/employees/EmployeeDetailsModal';
 import StatusBadge from '../components/StatusBadge';
 import Pagination from '../components/Pagination';
 import ConfirmDialog from '../components/ConfirmDialog';
+import ResetPasswordModal from '../components/ResetPasswordModal';
 import { ROLES, ROLE_LABELS, ROLE_LEVELS, EMPLOYMENT_STATUS, STATUS_LABELS } from '../constants';
 import { getInitials } from '../utils/format';
 
@@ -46,6 +47,7 @@ const EmployeesPage = () => {
   const [formModal, setFormModal] = useState(null); // { mode: 'add' | 'edit', employee }
   const [details, setDetails] = useState(null);
   const [toDeactivate, setToDeactivate] = useState(null);
+  const [toReset, setToReset] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const debouncedSearch = useDebounce(filters.search);
@@ -347,6 +349,16 @@ const EmployeesPage = () => {
                         )}
                         {canManage(u) && u.employmentStatus !== EMPLOYMENT_STATUS.INACTIVE && (
                           <button
+                            onClick={() => setToReset(u)}
+                            className={`${iconButton} hover:text-primary`}
+                            title="Reset password"
+                            aria-label={`Reset password for ${u.name}`}
+                          >
+                            <KeyRound size={17} />
+                          </button>
+                        )}
+                        {canManage(u) && u.employmentStatus !== EMPLOYMENT_STATUS.INACTIVE && (
+                          <button
                             onClick={() => setToDeactivate(u)}
                             className={`${iconButton} hover:text-status-inactive-text`}
                             title="Deactivate"
@@ -406,6 +418,14 @@ const EmployeesPage = () => {
           busy={busy}
           onConfirm={confirmDeactivate}
           onCancel={() => setToDeactivate(null)}
+        />
+      )}
+
+      {toReset && (
+        <ResetPasswordModal
+          name={toReset.name}
+          url={`/users/${toReset._id}/reset-password`}
+          onClose={() => setToReset(null)}
         />
       )}
     </div>

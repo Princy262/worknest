@@ -6,6 +6,7 @@ import {
   updateUser,
   updateMyProfile,
   deactivateUser,
+  resetUserPassword,
 } from '../controllers/userController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
@@ -23,6 +24,8 @@ router.route('/').get(managers, getUsers).post(managers, createUser);
 
 // "/me" MUST come before "/:id", or Express would treat "me" as an id
 router.put('/me', updateMyProfile);
+
+router.post('/:id/reset-password', managers, resetUserPassword);
 
 router
   .route('/:id')

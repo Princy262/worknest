@@ -1,6 +1,7 @@
 import Company from '../models/Company.js';
 import User from '../models/User.js';
 import makeUsername from '../utils/makeUsername.js';
+import generateTemporaryPassword from '../utils/generateTemporaryPassword.js';
 import { isText, isId } from '../utils/validators.js';
 import { ROLES, COMPANY_STATUS, CONTACT_FIELDS } from '../utils/constants.js';
 
@@ -126,4 +127,22 @@ export const updateCompany = async (req, res) => {
 
   await company.save();
   res.json({ company });
+};
+
+// ------------------------------------------------------------------
+// RESET A COMPANY HEAD'S PASSWORD   POST /api/platform/companies/:id/reset-head-password
+// ------------------------------------------------------------------
+export const resetHeadPassword = async (req, res) => {
+  const { id } = req.params; // the company's id
+  if (!isId(id)) return res.status(400).json({ message: 'Invalid ID' });
+
+  const head = await User.findOne({ company: id, role: ROLES.COMPANY_HEAD });
+  if (!head) return res.status(404).json({ message: 'Company Head not found' });
+
+  const temporaryPassword = generateTemporaryPassword();
+  head.password = temporaryPassword; // hashed by the pre-save hook
+  head.mustChangePassword = true;
+  await head.save();
+
+  res.json({ user: head, temporaryPassword });
 };

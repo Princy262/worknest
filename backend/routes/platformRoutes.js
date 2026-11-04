@@ -3,6 +3,7 @@ import {
   createCompany,
   listCompanies,
   updateCompany,
+  resetHeadPassword,
 } from '../controllers/platformController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
@@ -15,5 +16,6 @@ router.use(protect, authorizeRoles(ROLES.PLATFORM_OWNER));
 
 router.route('/companies').get(listCompanies).post(createCompany);
 router.put('/companies/:id', updateCompany);
+router.post('/companies/:id/reset-head-password', resetHeadPassword);
 
 export default router;

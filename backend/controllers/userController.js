@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import Department from '../models/Department.js';
 import Team from '../models/Team.js';
+import generateTemporaryPassword from '../utils/generateTemporaryPassword.js';
 import makeUsername from '../utils/makeUsername.js';
 import {
   ROLES,
@@ -314,4 +315,35 @@ export const deactivateUser = async (req, res) => {
   await Team.updateMany({ manager: target._id }, { $unset: { manager: 1 } });
 
   res.json({ message: 'User deactivated' });
+};
+
+// ------------------------------------------------------------------
+// RESET SOMEONE'S PASSWORD   POST /api/users/:id/reset-password
+// ------------------------------------------------------------------
+export const resetUserPassword = async (req, res) => {
+  const { id } = req.params;
+  if (!isId(id)) return res.status(400).json({ message: 'Invalid ID' });
+
+  const target = await User.findById(id);
+
+  // Same answer for "does not exist" and "not allowed"
+  if (!target || !canAccessUser(req.user, target)) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+  // You can only reset people below you, and never yourself
+  if (!canManageUser(req.user, target)) {
+    return res.status(403).json({ message: 'You cannot reset this password' });
+  }
+  if (target.employmentStatus === EMPLOYMENT_STATUS.INACTIVE) {
+    return res.status(400).json({ message: 'This account is inactive. Reactivate it first.' });
+  }
+
+  const temporaryPassword = generateTemporaryPassword();
+  target.password = temporaryPassword; // the pre-save hook hashes it
+  target.mustChangePassword = true; // they must choose their own at the next login
+  await target.save();
+
+  // The password hash is stripped from "user" automatically. The plain temporary
+  // password is returned only here, once, and is never stored.
+  res.json({ user: target, temporaryPassword });
 };

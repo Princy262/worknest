@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Power, PowerOff, Landmark } from 'lucide-react';
+import { Plus, Pencil, Power, PowerOff, Landmark, KeyRound} from 'lucide-react';
 import api from '../api/axios';
 import CompanyFormModal from '../features/companies/CompanyFormModal';
 import StatCard from '../components/StatCard';
 import StatusBadge from '../components/StatusBadge';
 import ConfirmDialog from '../components/ConfirmDialog';
+import ResetPasswordModal from '../components/ResetPasswordModal';
 import { COMPANY_STATUS } from '../constants';
 import { getInitials, formatDate } from '../utils/format';
 
@@ -18,6 +19,7 @@ const CompaniesPage = () => {
 
   const [formModal, setFormModal] = useState(null); // { company }, where company is null when creating
   const [toDeactivate, setToDeactivate] = useState(null);
+  const [toReset, setToReset] = useState(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [actionError, setActionError] = useState('');
@@ -184,6 +186,16 @@ const CompaniesPage = () => {
                           >
                             <Pencil size={17} />
                           </button>
+                          {company.head && (
+                            <button
+                              onClick={() => setToReset(company)}
+                              className={`${iconButton} hover:text-primary`}
+                              title="Reset the Company Head's password"
+                              aria-label={`Reset the Company Head password for ${company.name}`}
+                            >
+                              <KeyRound size={17} />
+                            </button>
+                          )}
                           {isActive ? (
                             <button
                               onClick={() => setToDeactivate(company)}
@@ -232,6 +244,14 @@ const CompaniesPage = () => {
           busy={busy}
           onConfirm={() => changeStatus(toDeactivate, COMPANY_STATUS.INACTIVE)}
           onCancel={() => setToDeactivate(null)}
+        />
+      )}
+
+      {toReset && (
+        <ResetPasswordModal
+          name={toReset.head.name}
+          url={`/platform/companies/${toReset._id}/reset-head-password`}
+          onClose={() => setToReset(null)}
         />
       )}
     </div>
