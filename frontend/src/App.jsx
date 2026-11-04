@@ -10,6 +10,7 @@ import ChangePasswordPage from './pages/ChangePasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 import ProfilePage from './pages/ProfilePage';
+import EmployeesPage from './pages/EmployeesPage';
 
 const { PLATFORM_OWNER, COMPANY_HEAD, DEPT_HEAD, TEAM_MANAGER } = ROLES;
 
@@ -35,10 +36,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
 
           <Route element={<ProtectedRoute allowedRoles={[COMPANY_HEAD, DEPT_HEAD, TEAM_MANAGER]} />}>
-            <Route
-              path="/employees"
-              element={<PlaceholderPage title="Employees" description="Search, filter and manage the people you are allowed to see." />}
-            />
+            <Route path="/employees" element={<EmployeesPage />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={[COMPANY_HEAD]} />}>

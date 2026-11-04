@@ -33,3 +33,16 @@ export const STATUS_LABELS = {
   ON_LEAVE: 'On Leave',
   INACTIVE: 'Inactive',
 };
+
+// Rank of each role. Must match backend/utils/constants.js.
+export const ROLE_LEVELS = {
+  PLATFORM_OWNER: 5,
+  COMPANY_HEAD: 4,
+  DEPT_HEAD: 3,
+  TEAM_MANAGER: 2,
+  EMPLOYEE: 1,
+};
+
+// The roles a person may create: only roles ranked below their own.
+export const getCreatableRoles = (role) =>
+  Object.keys(ROLE_LEVELS).filter((r) => ROLE_LEVELS[r] < ROLE_LEVELS[role]);
