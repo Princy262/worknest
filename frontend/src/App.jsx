@@ -8,9 +8,11 @@ import AppLayout from './components/AppLayout';
 import LoginPage from './pages/LoginPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import DashboardPage from './pages/DashboardPage';
-import PlaceholderPage from './pages/PlaceholderPage';
 import ProfilePage from './pages/ProfilePage';
 import EmployeesPage from './pages/EmployeesPage';
+import DepartmentsPage from './pages/DepartmentsPage';
+import TeamsPage from './pages/TeamsPage';
+import PlaceholderPage from './pages/PlaceholderPage';
 
 const { PLATFORM_OWNER, COMPANY_HEAD, DEPT_HEAD, TEAM_MANAGER } = ROLES;
 
@@ -40,10 +42,7 @@ function App() {
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={[COMPANY_HEAD]} />}>
-            <Route
-              path="/departments"
-              element={<PlaceholderPage title="Departments" description="Create departments and see their heads and teams." />}
-            />
+            <Route path="/departments" element={<DepartmentsPage />} />
             <Route
               path="/company"
               element={<PlaceholderPage title="Company" description="Your organization's details." />}
@@ -51,16 +50,18 @@ function App() {
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={[COMPANY_HEAD, DEPT_HEAD]} />}>
-            <Route
-              path="/teams"
-              element={<PlaceholderPage title="Teams" description="Create teams and see their managers and members." />}
-            />
+            <Route path="/teams" element={<TeamsPage />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={[PLATFORM_OWNER]} />}>
             <Route
               path="/companies"
-              element={<PlaceholderPage title="Companies" description="Create and manage companies and their Company Heads." />}
+              element={
+                <PlaceholderPage
+                  title="Companies"
+                  description="Create and manage companies and their Company Heads."
+                />
+              }
             />
           </Route>
         </Route>
