@@ -1,18 +1,37 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 
-// Pulls the server's error message out of a failed request.
-const getMessage = (error, fallback) => error.response?.data?.message || fallback;
+// A sleeping free server shows up as "no answer" or a 502 / 503 / 504 gateway error.
+const isServerAsleep = (error) => {
+  const status = error.response?.status;
+  return !error.response || (status >= 502 && status <= 504);
+};
+
+// Pulls a readable message out of a failed request.
+const getMessage = (error, fallback) =>
+  isServerAsleep(error)
+    ? 'The server is waking up. Please wait a few seconds and try again.'
+    : error.response.data?.message || fallback;
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // "Who am I?" Runs when the app opens. Uses the login cookie.
+// On the live site it retries every 5 seconds for about a minute while the server wakes up.
 export const fetchCurrentUser = createAsyncThunk(
   'auth/fetchCurrentUser',
   async (_, { rejectWithValue }) => {
-    try {
-      const { data } = await api.get('/auth/me');
-      return data.user;
-    } catch (error) {
-      return rejectWithValue(getMessage(error, 'Not logged in'));
+    const ATTEMPTS = import.meta.env.PROD ? 12 : 1;
+
+    for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+      try {
+        const { data } = await api.get('/auth/me');
+        return data.user;
+      } catch (error) {
+        if (!isServerAsleep(error) || attempt === ATTEMPTS) {
+          return rejectWithValue(getMessage(error, 'Not logged in'));
+        }
+        await wait(5000);
+      }
     }
   }
 );

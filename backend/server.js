@@ -16,10 +16,10 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
 
-// When deployed behind a host like Render, the real visitor IP comes from a proxy header.
-// Without this, every visitor would look like the same IP and share one limit.
+// Behind Vercel and Render, the real visitor address is in a header.
+// TRUST_PROXY_HOPS says how many addresses from the right to skip. You will check it in Step 11.
 if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
+  app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS) || 1);
 }
 
 app.use(helmet());
@@ -30,6 +30,11 @@ app.use(cookieParser());
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'WorkNest API is running' });
+});
+
+// TEMPORARY: used once in Step 11 to check the rate limiter sees your real address. Delete it afterwards.
+app.get('/api/debug-ip', (req, res) => {
+  res.json({ ip: req.ip, forwardedFor: req.headers['x-forwarded-for'] });
 });
 
 app.use('/api', apiLimiter);
