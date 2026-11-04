@@ -50,7 +50,7 @@ export const logout = async (req, res) => {
 // ---------- GET ME ----------
 export const getMe = async (req, res) => {
   const user = await User.findById(req.user._id)
-    .populate('company', 'name status')
+    .populate('company', 'name status domain createdAt')
     .populate('department', 'name')
     .populate('team', 'name');
 
