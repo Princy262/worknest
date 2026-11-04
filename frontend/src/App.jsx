@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { fetchCurrentUser } from './features/auth/authSlice';
 import { ROLES } from './constants';
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -14,6 +14,7 @@ import DepartmentsPage from './pages/DepartmentsPage';
 import TeamsPage from './pages/TeamsPage';
 import CompanyPage from './pages/CompanyPage';
 import CompaniesPage from './pages/CompaniesPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 const { PLATFORM_OWNER, COMPANY_HEAD, DEPT_HEAD, TEAM_MANAGER } = ROLES;
 
@@ -57,8 +58,8 @@ function App() {
         </Route>
       </Route>
 
-      {/* Unknown address: send them home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Unknown address */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
