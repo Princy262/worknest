@@ -32,11 +32,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'WorkNest API is running' });
 });
 
-// TEMPORARY: used once in Step 11 to check the rate limiter sees your real address. Delete it afterwards.
-app.get('/api/debug-ip', (req, res) => {
-  res.json({ ip: req.ip, forwardedFor: req.headers['x-forwarded-for'] });
-});
-
 app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
