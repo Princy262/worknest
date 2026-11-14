@@ -5,6 +5,7 @@ import { loginUser, clearError } from '../features/auth/authSlice';
 import FormField from '../components/FormField';
 import PasswordField from '../components/PasswordField';
 import FullPageLoader from '../components/FullPageLoader';
+import SlowNotice from '../components/SlowNotice';
 import logo from '../assets/worknest-logo.png';
 
 const levels = [
@@ -115,6 +116,7 @@ const LoginPage = () => {
             >
               {loading ? 'Logging in...' : 'Log in'}
             </button>
+            {loading && <SlowNotice />}
           </form>
 
           <p className="text-xs text-muted mt-6 text-center">
